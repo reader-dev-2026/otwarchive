@@ -1,4 +1,6 @@
 class SeriesController < ApplicationController
+  include WorksHelper
+
   before_action :check_user_status, only: [:new, :create, :edit, :update]
   before_action :load_series, only: [:show, :edit, :remove_user_creatorship, :update, :manage, :update_positions, :confirm_delete, :destroy]
   before_action :check_ownership, except: [:index, :show, :new, :create]
@@ -48,9 +50,7 @@ class SeriesController < ApplicationController
     if @series.unrevealed?
       @page_subtitle = t(".unrevealed_series")
     else
-      @page_title = get_page_title(@series.fandoms.pluck(:name).join(t("support.array.words_connector")),
-                                   helpers.text_byline(@series),
-                                   @series.title)
+      @page_title = work_page_title(@series, @series.title)
     end
 
     return unless current_user.respond_to?(:subscriptions)
